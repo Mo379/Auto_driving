@@ -1,81 +1,63 @@
-import jax 
+import jax
 import jax.numpy as jnp
+from jax.example_libraries import stax, optimizers
+import operator as op
+import functools
+#
 import numpy as np
 
-def init_model(model_shape, parent_key, scale = 0.01):
-    """ Initialise the MLP model
-    This function initialises mlp model parameters (weights and biases)
-
-    Args:
-        model_shape: input list
-        parent_key: input PRNGKey
-        scale: input float
-    """
+#my libarary
+def my_combinator(*layers):
+  n_layers = len(layers)
+  init_funs, apply_funs = zip(*layers)
+  def init_fn(rng, input_shape):
     params = []
-    keys = jax.random.split(parent_key, num=len(model_shape)-1)
-    for in_dim, out_dim, key in zip(model_shape[:-1],model_shape[1:],keys):
-        w_key, b_key = jax.random.split(key)
-        params.append([
-                scale*jax.random.normal(w_key, shape=(out_dim,in_dim)),
-                scale*jax.random.normal(b_key, shape=(out_dim,))
-            ])
-    return params
-
-def forward(params, x):
-    """Predict method
-    This function predicts output value of the network for an input
-
-    Args: 
-        params: input pytree (trained model)
-        x: input array
-    """
-    *hidden, last = params
-    for layer in hidden:
-        x = jax.nn.relu(jnp.dot(layer[0],x) + layer[1])
-    return jnp.dot(last[0], x) + last[1]
-batch_forward = jax.vmap(forward, in_axes = (None,0))
-
-def loss_fn(params, x, y):
-    predictions = batch_forward(params,x)
-    return (1/len(x))*jnp.sum((predictions-y)**2)
-
-@jax.jit
-def RMSprop_update(params, x, y,lr, r_t):
-    """ RMSprob optimised full pass
-    A forward and backwards pass over the network parameters using RMS prob as the optimiser
-
-    Args:
-        params: input pytree (untrained model)
-        x: input array (training examples)
-        lr: input float (learning rate)
-        r_t: input pytree (optimiser_state)
-    """
-    loss,grads = jax.value_and_grad(loss_fn)(params,x,y)
-    params,r_t = rms_prop(params,grads,r_t)
-    return r_t,loss,params
-
-
-def rms_prop(params,grad,r_,alpha=0.0001,rho=0.9,epsilon=10**(-7)):
-    """RMSprop, stateful optimiser
-    This function computes the ouput of the RMSprop algorithm
-
-    Args:
-        params: input pytree
-        grad: input pytree
-        r_: input pytree
-    """
-    r_t = jax.tree_multimap(lambda g,r: rho*r +(1-rho)*g**(2) ,grad,r_)
-    w_t = jax.tree_multimap(lambda g,r,p: p - alpha*(1/(jnp.sqrt(r)+epsilon))*g,grad,r_t,params)
-    return w_t,r_t
+    for init_fun in init_funs:
+      rng, layer_rng = jax.random.split(rng)
+      input_shape, layer_params = init_fun(layer_rng, input_shape)#init funs return output-shape, params 
+      params.append(layer_params)
+    return input_shape, params
+  def apply_fn(layers_params, inputs, **kwargs):
+    rng = kwargs.pop('rng', None)
+    rngs = jax.random.split(rng, n_layers) if rng is not None else (None,) * n_layers
+    for apply_fun,params,rng in zip(apply_funs,layers_params,rngs):
+      inputs = apply_fun(params,inputs, **kwargs)
+    return inputs
+  return init_fn, apply_fn
 
 
 
+def element_wise(function, **fun_kwargs):
+  init_fun = lambda rng,input_shape: (input_shape,())
+  apply_fun = lambda params,inputs, **kwargs: function(inputs, **fun_kwargs)
+  return init_fun, apply_fun
+Relu_layer = element_wise(jax.nn.relu)
+Softmax_layer = element_wise(jax.nn.softmax, axis=-1)
+golrot = jax.nn.initializers.glorot_normal
+normal = jax.nn.initializers.normal
 
 
+def my_Dense(out_dim, w_init = golrot(), b_init = normal()):
+  def init_fn(rng, input_shape):
+    output_shape = input_shape[:-1] + (out_dim,)
+    k_w, k_b = jax.random.split(rng)
+    w, b = w_init(k_w,(input_shape[-1], out_dim)),b_init(k_b,(out_dim,))
+    params = (w,b)
+    return output_shape, params
 
 
+  def apply_fn(params, inputs, **kwargs):
+    w,b = params
+    return jnp.dot(inputs,w) + b
+  return init_fn, apply_fn
 
 
-
+def my_Flatten():
+  def init_fn(rng, input_shape):
+    output_shape = input_shape[0], functools.reduce(op.mul, input_shape[1:])
+    return output_shape,  ()
+  def apply_fn(params, inputs, **kwargs):
+    return jnp.reshape(inputs, (inputs.shape[0], -1))
+  return init_fn, apply_fn
 
 

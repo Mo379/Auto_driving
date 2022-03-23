@@ -37,8 +37,8 @@ class DataLoader:
                 Y.append(Labels)
             loaded_set_features.append(X)
             loaded_set_labels.append(Y)
-        loaded_set_features = jnp.array(loaded_set_features)
-        loaded_set_labels= jnp.array(loaded_set_labels)
+        loaded_set_features = jnp.array(loaded_set_features,dtype=jnp.float32)/255
+        loaded_set_labels= jnp.array(loaded_set_labels,dtype=jnp.float32)/255
         return loaded_set_features,loaded_set_labels
 
     def Load_batch(self, batch, data_shape=(-1,1)):
