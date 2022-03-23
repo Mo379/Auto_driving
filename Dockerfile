@@ -5,6 +5,6 @@ RUN /usr/local/bin/python  -m pip install --upgrade pip
 RUN pip install setuptools
 RUN pip install -r requirements.txt
 COPY ./APP APP
-WORKDIR /usr/src/app/APP
+WORKDIR /usr/src/app/APP/purejax_cnn
 CMD ["python","main.py"]
 
