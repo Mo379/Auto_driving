@@ -1,4 +1,5 @@
 extras/data/*
 venv/*
 APP/*/wandb
+APP/*/data
 APP/*/pkls

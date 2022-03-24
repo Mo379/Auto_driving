@@ -7,7 +7,7 @@ import functools
 from src.datahandle import *
 from src.model_cnn import *
 #hyper
-directory = '/Users/M/Desktop/Uni_MLIS_car/extras/data/A_training_given/training_data/'
+directory = 'data/A_training_given/training_data/'
 training_folder = 'training_data'
 training_labels_file= 'training_norm.csv'
 #configurations
