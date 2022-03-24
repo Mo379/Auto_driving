@@ -3,4 +3,4 @@ venv/*
 APP/*/wandb
 APP/*/data
 APP/*/pkls
-pkls
+pkls/*
