@@ -20,8 +20,6 @@ split= 0.8
 batch_size = 256
 n_epochs = 25
 lr = 0.0001
-
-
 #dataloading object
 training_object= DataLoader(
         directory,
@@ -72,15 +70,15 @@ def TrainModelInBatches(X,Y,epochs,opt_state):
   for epoch in range(epochs):
     X_iter = iter(X)
     Y_iter = iter(Y)
-    for _ in range(len(X)): 
+    for i in range(len(X)): 
         X_batch,Y_batch= next(X_iter),next(Y_iter)
-        loss, grads = jax.value_and_grad(loss_fn)(opt_get_params(opt_state), 
-                X_batch,Y_batch)
-        opt_state = opt_update(i, grads, opt_state)
-        print(loss)
-        continue
+        loss, grads = 1,2#jax.value_and_grad(loss_fn)(opt_get_params(opt_state), 
+                #X_batch,Y_batch)
+        opt_state =1 #opt_update(i, grads, opt_state)
+        print(f"- Batch {i} at loss: {loss}")
         if conf_tracking==1:
             wandb.log({"batch_loss": loss})
+    print(f"--- Epoch {epoch} at loss {loss}")
   return opt_state
 #optimizer_init
 opt_init, opt_update, opt_get_params = optimizers.adagrad(lr)
@@ -94,6 +92,9 @@ if __name__ == "__main__":
     final_state = TrainModelInBatches(
             loaded_X_batches, loaded_Y_batches,
             n_epochs,opt_state)
+    pickle.dump(final_state, open('pkls/final_state.pkl', 'wb'))
+
+
 
 
 
