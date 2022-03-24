@@ -76,7 +76,7 @@ def TrainModelInBatches(X,Y,epochs,opt_state):
         X_batch,Y_batch= next(X_iter),next(Y_iter)
         loss, grads = jax.value_and_grad(loss_fn)(opt_get_params(opt_state), 
                 X_batch,Y_batch)
-        opt_state = 1 #opt_update(i, grads, opt_state)
+        opt_state = opt_update(i, grads, opt_state)
         print(loss)
         continue
         if conf_tracking==1:
@@ -94,6 +94,6 @@ if __name__ == "__main__":
     final_state = TrainModelInBatches(
             loaded_X_batches, loaded_Y_batches,
             n_epochs,opt_state)
-    print(final_state)
+
 
 
