@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  model:
+    build: .
+    volumes:   
+      - ./APP:/usr/src/app/APP/
+      - ./extras/data:/usr/src/app/APP/purejax_cnn/data
+      - ./pkls:/usr/src/app/APP/purejax_cnn/pkls
+    command: bash -c "cd /usr/src/app/APP/purejax_cnn && wandb login --relogin bd0584875dd3c52df37cbd4565c0e22319f9cef6 && python main.py"
+
+

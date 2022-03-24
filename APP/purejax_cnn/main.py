@@ -11,13 +11,13 @@ directory = 'data/A_training_given/training_data/'
 training_folder = 'training_data'
 training_labels_file= 'training_norm.csv'
 #configurations
-conf_tracking = 0
+conf_tracking = 1
 seed = 0
 rng = jax.random.PRNGKey(seed)
 data_shape = 'original'
 parameter_init_scale = 0.01
 split= 0.8
-batch_size = 256
+batch_size = 2
 n_epochs = 25
 lr = 0.0001
 #dataloading object
@@ -30,15 +30,17 @@ training_object= DataLoader(
 train,test = training_object.LoadModelData_info(
         split = split, 
         batch_size = batch_size)
+print('-> DataLoading')
 #loaded data iterator
 loaded_X_batches, loaded_Y_batches= training_object.Load_all_batches(
         train[0:5], 
         data_shape=data_shape
         )
 #model initialisation
+print('-> Model init')
 init_fun, apply_fun = my_combinator(
-    stax.Conv(32,(5,5), padding='SAME'),Relu_layer,
-    stax.Conv(32,(5,5), padding='SAME'),Relu_layer,
+    stax.Conv(32,(50,50), padding='SAME'),Relu_layer,
+    stax.Conv(32,(20,20), padding='SAME'),Relu_layer,
     stax.Conv(32, (5,5),padding='SAME'),Relu_layer,
     my_Flatten(),
     my_Dense(2)
@@ -72,15 +74,16 @@ def TrainModelInBatches(X,Y,epochs,opt_state):
     Y_iter = iter(Y)
     for i in range(len(X)): 
         X_batch,Y_batch= next(X_iter),next(Y_iter)
-        loss, grads = 1,2#jax.value_and_grad(loss_fn)(opt_get_params(opt_state), 
-                #X_batch,Y_batch)
-        opt_state =1 #opt_update(i, grads, opt_state)
+        loss, grads = jax.value_and_grad(loss_fn)(opt_get_params(opt_state), 
+                X_batch,Y_batch)
+        opt_state =opt_update(i, grads, opt_state)
         print(f"- Batch {i} at loss: {loss}")
         if conf_tracking==1:
             wandb.log({"batch_loss": loss})
     print(f"--- Epoch {epoch} at loss {loss}")
   return opt_state
 #optimizer_init
+print('-> Optimizer init')
 opt_init, opt_update, opt_get_params = optimizers.adagrad(lr)
 opt_state = opt_init(params)
 loss_fn= jax.jit(loss_fn)
