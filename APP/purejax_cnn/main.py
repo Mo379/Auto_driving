@@ -7,18 +7,18 @@ import functools
 from src.datahandle import *
 from src.model_cnn import *
 #hyper
-directory = 'data/A_training_given/training_data/'
+directory = '../../extras/data/A_training_given/training_data/'
 training_folder = 'training_data'
 training_labels_file= 'training_norm.csv'
 #configurations
-conf_tracking = 0
+conf_tracking = 1
 seed = 0
 rng = jax.random.PRNGKey(seed)
 data_shape = 'original'
 parameter_init_scale = 0.01
-split= 0.8
-batch_size = 10
-n_epochs = 5
+split= 1
+batch_size = 256
+n_epochs = 20
 lr = 0.0001
 #dataloading object
 training_object= DataLoader(
@@ -33,22 +33,30 @@ train,test = training_object.LoadModelData_info(
 print('-> DataLoading')
 #loaded data iterator
 loaded_X_batches, loaded_Y_batches= training_object.Load_all_batches(
-        train[0:5], 
+        train[0:1], 
         data_shape=data_shape
         )
 #model initialisation
 print('-> Model init')
 init_fun, apply_fun = my_combinator(
-    #stax.Conv(32,(50,50), padding='SAME'),Relu_layer,
-    #stax.Conv(32,(20,20), padding='SAME'),Relu_layer,
-    stax.Conv(32, (5,5),padding='SAME'),Relu_layer,
+    stax.Conv(4,(10,10), padding='SAME'),Relu_layer,
+    stax.MaxPool((10,10)),
+    stax.AvgPool((10,10)),
+
+    stax.Conv(4,(10,10), padding='SAME'),Relu_layer,
+    stax.MaxPool((10,10)),
+    stax.AvgPool((10,10)),
+
+    stax.Conv(4, (10,10),padding='SAME'),Relu_layer,
+    stax.MaxPool((20,20)),
+    stax.AvgPool((20,20)),
+
     my_Flatten(),
     my_Dense(2)
 )
 input_shape =loaded_X_batches.shape[-3:]
 _, params= init_fun(rng, (batch_size,) + input_shape)
 model_shape = jax.tree_map(lambda x: x.shape, params)
-
 
 
 #wandb tracking
