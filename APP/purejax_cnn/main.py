@@ -60,7 +60,7 @@ model_shape = jax.tree_map(lambda x: x.shape, params)
 #wandb tracking
 if conf_tracking:
     config = {
-      "model_type" : 'Basic convnet',
+      "model_type" : 'Bigger convnet + avg pool and max pool layers',
       "param_initialisation_scale" : parameter_init_scale,
       "model_shape" : str(model_shape),
       "learning_rate": lr,
