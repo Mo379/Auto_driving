@@ -56,10 +56,12 @@ class DataLoader:
             image_number = instance[1]
             angle = instance[2]
             speed = instance[3]
-            Y.append([angle,speed])
-        X = np.array(X)
-        Y = np.array(Y)
-        return X,Y
+            Labels = np.array([angle,speed], dtype=np.float32)
+            Y.append(Labels)
+        loaded_set_features = jnp.array(X,dtype=jnp.float32)/255
+        loaded_set_labels= jnp.array(Y,dtype=jnp.float32)
+        return loaded_set_features,loaded_set_labels
+
 
     def Load_batch_quiz(self, batch, data_shape=(-1,1)):
         X = []

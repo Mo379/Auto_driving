@@ -31,12 +31,7 @@ training_object= DataLoader(
 train,test = training_object.LoadModelData_info(
         split = split, 
         batch_size = batch_size)
-print('-> DataLoading')
-#loaded data iterator
-loaded_X_batches, loaded_Y_batches= training_object.Load_all_batches(
-        train, 
-        data_shape=data_shape
-        )
+example_batch_x,example_batch_y = training_object.Load_batch(train[0], data_shape=data_shape)
 #model initialisation
 print('-> Model init')
 init_fun, apply_fun = my_combinator(
@@ -55,7 +50,7 @@ init_fun, apply_fun = my_combinator(
     my_Flatten(),
     my_Dense(2)
 )
-input_shape =loaded_X_batches.shape[-3:]
+input_shape =example_batch_x.shape[-3:]
 _, params= init_fun(rng, (batch_size,) + input_shape)
 model_shape = jax.tree_map(lambda x: x.shape, params)
 
@@ -92,10 +87,8 @@ if __name__ == "__main__":
     print("Begin training")
     start = time.time()
     for epoch in range(n_epochs):
-        X_iter = iter(loaded_X_batches)
-        Y_iter = iter(loaded_Y_batches)
-        for i in range(len(loaded_X_batches)): 
-            X_batch,Y_batch= next(X_iter),next(Y_iter)
+        for i in range(len(train)): 
+            X_batch,Y_batch=training_object.Load_batch(train[i], data_shape=data_shape) 
             loss, opt_state = update(opt_state, X_batch, Y_batch)
             print(f"- Batch {i} at loss: {loss}")
             if conf_tracking==1:
