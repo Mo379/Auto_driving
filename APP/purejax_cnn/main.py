@@ -6,6 +6,7 @@ from jax.example_libraries import stax, optimizers
 import functools
 from src.datahandle import *
 from src.model_cnn import *
+import time
 #hyper
 directory = '../../extras/data/A_training_given/training_data/'
 training_folder = 'training_data'
@@ -16,9 +17,9 @@ seed = 0
 rng = jax.random.PRNGKey(seed)
 data_shape = 'original'
 parameter_init_scale = 0.01
-split= 1
+split= 0.8
 batch_size = 256
-n_epochs = 20
+n_epochs = 30
 lr = 0.0001
 #dataloading object
 training_object= DataLoader(
@@ -33,7 +34,7 @@ train,test = training_object.LoadModelData_info(
 print('-> DataLoading')
 #loaded data iterator
 loaded_X_batches, loaded_Y_batches= training_object.Load_all_batches(
-        train[0:1], 
+        train, 
         data_shape=data_shape
         )
 #model initialisation
@@ -89,6 +90,7 @@ opt_state = opt_init(params)
 ##################GPU goes buuurrrrrr#######################
 if __name__ == "__main__":
     print("Begin training")
+    start = time.time()
     for epoch in range(n_epochs):
         X_iter = iter(loaded_X_batches)
         Y_iter = iter(loaded_Y_batches)
@@ -99,6 +101,8 @@ if __name__ == "__main__":
             if conf_tracking==1:
                 wandb.log({"batch_loss": loss})
         print(f"--- Epoch {epoch} at loss {loss}")
+    end = time.time()
+    print(f"total time: {end-start}")
     pickle.dump(opt_get_params(opt_state), open('pkls/final_params.pkl', 'wb'))
 
 
