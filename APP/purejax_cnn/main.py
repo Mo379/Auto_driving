@@ -35,14 +35,14 @@ example_batch_x,example_batch_y = training_object.Load_batch(train[0], data_shap
 #model initialisation
 print('-> Model init')
 init_fun, apply_fun = my_combinator(
-    stax.Conv(8,(5,5), padding='SAME'),Relu_layer,
+    stax.Conv(5,(5,5), padding='SAME'),Relu_layer,
     stax.MaxPool((3,3)),
-    stax.Conv(8,(5,5), padding='SAME'),Relu_layer,
+    stax.Conv(5,(5,5), padding='SAME'),Relu_layer,
     stax.AvgPool((3,3)),
-    stax.Conv(8, (3,3),padding='SAME'),Relu_layer,
+    stax.Conv(5, (3,3),padding='SAME'),Relu_layer,
     stax.MaxPool((5,5)),
-    stax.Conv(8, (3,3),padding='SAME'),Relu_layer,
-    stax.AvgPool((5,5)),
+    stax.Conv(5, (3,3),padding='SAME'),Relu_layer,
+    stax.MaxPool((3,3)),
 
     my_Flatten(),
     my_Dense(2)
