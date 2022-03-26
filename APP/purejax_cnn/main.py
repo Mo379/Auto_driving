@@ -35,19 +35,21 @@ example_batch_x,example_batch_y = training_object.Load_batch(train[0], data_shap
 #model initialisation
 print('-> Model init')
 init_fun, apply_fun = my_combinator(
-    stax.Conv(4,(10,10), padding='SAME'),Relu_layer,
-    stax.MaxPool((10,10)),
-    stax.AvgPool((10,10)),
-
-    stax.Conv(4,(10,10), padding='SAME'),Relu_layer,
-    stax.MaxPool((10,10)),
-    stax.AvgPool((10,10)),
-
-    stax.Conv(4, (10,10),padding='SAME'),Relu_layer,
-    stax.MaxPool((20,20)),
+    stax.Conv(16,(3,3), padding='SAME'),Relu_layer,
+    stax.MaxPool((3,3)),
+    stax.Conv(16,(10,10), padding='SAME'),Relu_layer,
+    stax.AvgPool((3,3)),
+    stax.Conv(16, (5,5),padding='SAME'),Relu_layer,
+    stax.MaxPool((5,5)),
+    stax.Conv(64, (10,10),padding='SAME'),Relu_layer,
     stax.AvgPool((20,20)),
+    stax.Conv(24, (10,10),padding='SAME'),Relu_layer,
+    stax.AvgPool((5,5)),
 
     my_Flatten(),
+    my_Dense(256)
+    my_Dense(128)
+    my_Dense(64)
     my_Dense(2)
 )
 input_shape =example_batch_x.shape[-3:]
@@ -80,7 +82,7 @@ def update(opt_state, x,y):
     return loss,opt_state
 #optimizer_init
 print('-> Optimizer init')
-opt_init, opt_update, opt_get_params = optimizers.adagrad(lr)
+opt_init, opt_update, opt_get_params = optimizers.adam(lr)
 opt_state = opt_init(params)
 ##################GPU goes buuurrrrrr#######################
 if __name__ == "__main__":
