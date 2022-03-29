@@ -62,7 +62,7 @@ class DataLoader:
         loaded_set_labels= jnp.array(Y,dtype=jnp.float32)
         return loaded_set_features,loaded_set_labels
 
-    def Load_batch_quiz(batch, data_shape=(-1,1)):
+    def Load_batch_quiz(self, batch, data_shape=(-1,1)):
         X = []
         Image_order = []
         for instance in batch:
