@@ -95,7 +95,6 @@ def update(opt_state, x,y):
 print('-> Optimizer init')
 opt_init, opt_update, opt_get_params = optimizers.adam(lr)
 opt_state = opt_init(params)
-exit()
 ##################GPU goes buuurrrrrr#######################
 if __name__ == "__main__":
     print("Begin training")
