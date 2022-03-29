@@ -22,7 +22,7 @@ seed = 0
 rng = jax.random.PRNGKey(seed)
 rng2 = jax.random.PRNGKey(seed)
 data_shape = 'original'
-parameter_init_scale = 0.01
+parameter_init_scale = 0.0001
 split= 0.8
 batch_size = 256
 n_epochs = 20
@@ -44,16 +44,16 @@ print('-> Model init')
 def make_net(mode: str):
     return stax.serial( 
         stax.Conv(5,(5,5), padding='SAME'),LeakyRelu_layer,stax.Dropout(0.1, mode=mode),
-        stax.MaxPool((3,3)),
+        stax.AvgPool((3,3)),
 
         stax.Conv(5,(5,5), padding='SAME'),LeakyRelu_layer,stax.Dropout(0.1, mode=mode),
         stax.AvgPool((3,3)),
         
         stax.Conv(5, (5,5),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.1, mode=mode),
-        stax.MaxPool((3,3)),
+        stax.AvgPool((3,3)),
 
         stax.Conv(5, (5,5),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.1, mode=mode),
-        stax.MaxPool((3,3)),
+        stax.AvgPool((3,3)),
 
 
         my_Flatten(),
