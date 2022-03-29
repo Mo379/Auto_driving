@@ -8,6 +8,7 @@ from src.datahandle import *
 from src.model_cnn import *
 import time
 import pandas as pd
+import random
 #hyper
 directory = '../../extras/data/A_training_given/training_data/'
 training_folder = 'training_data'
