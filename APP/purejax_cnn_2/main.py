@@ -40,7 +40,7 @@ example_batch_x,example_batch_y = training_object.Load_batch(train[0], data_shap
 #model initialisation
 test = test[:,:-7,:].reshape(10,-1,4)
 print('-> Model init')
-def make_net(mode: str, rng):
+def make_net(mode: str):
     return my_combinator( 
         stax.Conv(5,(5,5), padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
         stax.MaxPool((2,2)),
