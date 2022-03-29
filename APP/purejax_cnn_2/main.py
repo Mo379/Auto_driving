@@ -26,7 +26,7 @@ parameter_init_scale = 0.01
 split= 0.8
 batch_size = 256
 n_epochs = 1
-lr = 0.0001
+lr = 0.001
 #dataloading object
 training_object= DataLoader(
         directory,
