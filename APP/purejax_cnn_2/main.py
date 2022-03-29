@@ -17,7 +17,7 @@ training_labels_file= 'training_norm.csv'
 quiz_directory = '../../extras/data/C_testing_given/test_data/'
 quiz_training_folder = 'test_data'
 #configurations
-conf_tracking = 0
+conf_tracking = 1
 seed = 0
 rng = jax.random.PRNGKey(seed)
 rng2 = jax.random.PRNGKey(seed)
