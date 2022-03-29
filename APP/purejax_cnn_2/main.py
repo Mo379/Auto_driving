@@ -43,20 +43,18 @@ test = test[:,:-7,:].reshape(10,-1,4)
 print('-> Model init')
 def make_net(mode: str):
     return stax.serial( 
-        stax.Conv(3,(6,6), padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
-        stax.MaxPool((2,2)),
+        stax.Conv(5,(5,5), padding='SAME'),LeakyRelu_layer,stax.Dropout(0.1, mode=mode),
+        stax.MaxPool((3,3)),
 
-        stax.Conv(3,(6,6), padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
-        stax.AvgPool((2,2)),
+        stax.Conv(5,(5,5), padding='SAME'),LeakyRelu_layer,stax.Dropout(0.1, mode=mode),
+        stax.AvgPool((3,3)),
         
-        stax.Conv(3, (6,6),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
-        stax.MaxPool((2,2)),
+        stax.Conv(5, (5,5),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.1, mode=mode),
+        stax.MaxPool((3,3)),
 
-        stax.Conv(3, (6,6),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
-        stax.MaxPool((2,2)),
+        stax.Conv(5, (5,5),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.1, mode=mode),
+        stax.MaxPool((3,3)),
 
-        stax.Conv(3, (6,6),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
-        stax.MaxPool((2,2)),
 
         my_Flatten(),
         my_Dense(2)
