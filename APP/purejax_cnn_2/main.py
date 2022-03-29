@@ -60,7 +60,7 @@ def make_net(mode: str):
         my_Flatten(),
         my_Dense(2)
     )
-init_fun, apply_fun = make_net('train'):
+init_fun, apply_fun = make_net('train')
 input_shape =example_batch_x.shape[-3:]
 _, params= init_fun(rng, (batch_size,) + input_shape)
 model_shape = jax.tree_map(lambda x: x.shape, params)
@@ -115,7 +115,7 @@ if __name__ == "__main__":
     print(f"total time: {end-start}")
     pickle.dump(opt_get_params(opt_state), open('pkls/final_params.pkl', 'wb'))
     print("-> Making predictions")
-    init_fun, apply_fun = make_net('test'):
+    init_fun, apply_fun = make_net('test')
 
     quiz_object= DataLoader(
         quiz_directory,
