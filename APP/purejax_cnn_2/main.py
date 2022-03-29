@@ -20,6 +20,7 @@ quiz_training_folder = 'test_data'
 conf_tracking = 1
 seed = 0
 rng = jax.random.PRNGKey(seed)
+rng2 = jax.random.PRNGKey(seed)
 data_shape = 'original'
 parameter_init_scale = 0.01
 split= 0.8
@@ -83,7 +84,7 @@ if conf_tracking:
 # 
 @jax.jit
 def loss_fn(params, x, y):
-    predictions = apply_fun(params,x,rng=rng)
+    predictions = apply_fun(params,x,rng=rng2)
     return (1/len(x))*jnp.sum((predictions-y)**2)
 @jax.jit
 def update(opt_state, x,y):
@@ -124,7 +125,7 @@ if __name__ == "__main__":
         )
     quiz_train = quiz_object.LoadQuizData_info()
     X,image_order = Load_batch_quiz(quiz_train, data_shape=data_shape)
-    prds = np.array(apply_fun(params,X,rng=rng))
+    prds = np.array(apply_fun(params,X,rng=rng2))
     final_prd = np.column_stack((image_order,prds))
     final_ordered = final_prd[final_prd[:, 0].argsort()]
     df = pd.DataFrame(final_ordered, columns = ['image_id','angle','speed'])
