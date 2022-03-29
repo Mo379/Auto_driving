@@ -69,7 +69,7 @@ model_shape = jax.tree_map(lambda x: x.shape, params)
 #wandb tracking
 if conf_tracking:
     config = {
-      "model_type" : 'Bigger convnet + avg pool and max pool layers, batch normalisation and dropout, using data augmentation and my own data generated from the car',
+      "model_type" : 'Bigger convnet + avg pool and max pool layers, batch normalisation and dropout, using my own data generated from the car and data augmentation',
       "param_initialisation_scale" : parameter_init_scale,
       "model_shape" : str(model_shape),
       "learning_rate": lr,
@@ -83,7 +83,7 @@ if conf_tracking:
 # 
 @jax.jit
 def loss_fn(params, x, y):
-    predictions = apply_fun(params,x)
+    predictions = apply_fun(params,x,rng)
     return (1/len(x))*jnp.sum((predictions-y)**2)
 @jax.jit
 def update(opt_state, x,y):
@@ -102,6 +102,7 @@ if __name__ == "__main__":
     for epoch in range(n_epochs):
         for i in range(len(train)): 
             X_batch,Y_batch=training_object.Load_batch(train[i], data_shape=data_shape) 
+            #X_batch,Y_batch = training_object.Augment_batch(X_batch,Y_batch)
             loss, opt_state = update(opt_state, X_batch, Y_batch)
             print(f"- Batch {i} at loss: {loss}")
             if conf_tracking==1:
@@ -123,7 +124,7 @@ if __name__ == "__main__":
         )
     quiz_train = quiz_object.LoadQuizData_info()
     X,image_order = Load_batch_quiz(quiz_train, data_shape=data_shape)
-    prds = np.array(apply_fun(params,X))
+    prds = np.array(apply_fun(params,X,rng))
     final_prd = np.column_stack((image_order,prds))
     final_ordered = final_prd[final_prd[:, 0].argsort()]
     df = pd.DataFrame(final_ordered, columns = ['image_id','angle','speed'])
