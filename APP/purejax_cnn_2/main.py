@@ -40,20 +40,27 @@ example_batch_x,example_batch_y = training_object.Load_batch(train[0], data_shap
 #model initialisation
 test = test[:,:-7,:].reshape(10,-1,4)
 print('-> Model init')
-init_fun, apply_fun = my_combinator(
+def make_net(mode: str):
+    return my_combinator( 
+        stax.Conv(5,(5,5), padding='SAME'),Relu_layer,stax.Dropout(0.2, mode=mode),
+        stax.MaxPool((2,2)),
 
-    stax.Conv(5,(5,5), padding='SAME'),Relu_layer,
-    stax.AvgPool((3,3)),
+        stax.Conv(5,(5,5), padding='SAME'),Relu_layer,stax.Dropout(0.2, mode=mode),
+        stax.AvgPool((2,2)),
+        
+        stax.Conv(5, (5,5),padding='SAME'),Relu_layer,stax.Dropout(0.2, mode=mode),
+        stax.MaxPool((2,2)),
 
-    stax.Conv(5,(5,5), padding='SAME'),Relu_layer,
-    stax.AvgPool((3,3)),
+        stax.Conv(5, (5,5),padding='SAME'),Relu_layer,stax.Dropout(0.2, mode=mode),
+        stax.MaxPool((2,2)),
 
-    stax.Conv(5, (5,5),padding='SAME'),Relu_layer,
-    stax.MaxPool((2,2)),
+        stax.Conv(5, (5,5),padding='SAME'),Relu_layer,stax.Dropout(0.2, mode=mode),
+        stax.MaxPool((2,2)),
 
-    my_Flatten(),
-    my_Dense(2)
-)
+        my_Flatten(),
+        my_Dense(2)
+    )
+init_fun, apply_fun = make_net('train'):
 input_shape =example_batch_x.shape[-3:]
 _, params= init_fun(rng, (batch_size,) + input_shape)
 model_shape = jax.tree_map(lambda x: x.shape, params)
@@ -88,6 +95,7 @@ def update(opt_state, x,y):
 print('-> Optimizer init')
 opt_init, opt_update, opt_get_params = optimizers.adam(lr)
 opt_state = opt_init(params)
+exit()
 ##################GPU goes buuurrrrrr#######################
 if __name__ == "__main__":
     print("Begin training")
@@ -108,6 +116,8 @@ if __name__ == "__main__":
     print(f"total time: {end-start}")
     pickle.dump(opt_get_params(opt_state), open('pkls/final_params.pkl', 'wb'))
     print("-> Making predictions")
+    init_fun, apply_fun = make_net('test'):
+
     quiz_object= DataLoader(
         quiz_directory,
         quiz_training_folder,
