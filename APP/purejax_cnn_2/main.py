@@ -124,7 +124,7 @@ if __name__ == "__main__":
         quiz_training_folder,
         )
     quiz_train = quiz_object.LoadQuizData_info()
-    X,image_order = Load_batch_quiz(quiz_train, data_shape=data_shape)
+    X,image_order = quiz_object.Load_batch_quiz(quiz_train, data_shape=data_shape)
     prds = np.array(apply_fun(params,X,rng=rng2))
     final_prd = np.column_stack((image_order,prds))
     final_ordered = final_prd[final_prd[:, 0].argsort()]
