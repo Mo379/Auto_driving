@@ -32,6 +32,7 @@ def element_wise(function, **fun_kwargs):
   apply_fun = lambda params,inputs, **kwargs: function(inputs, **fun_kwargs)
   return init_fun, apply_fun
 Relu_layer = element_wise(jax.nn.relu)
+LeakyRelu_layer = element_wise(jax.nn.leaky_relu)
 Softmax_layer = element_wise(jax.nn.softmax, axis=-1)
 golrot = jax.nn.initializers.glorot_normal
 normal = jax.nn.initializers.normal
