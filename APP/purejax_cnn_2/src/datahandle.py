@@ -62,9 +62,9 @@ class DataLoader:
         loaded_set_labels= jnp.array(Y,dtype=jnp.float32)
         return loaded_set_features,loaded_set_labels
 
-
-    def Load_batch_quiz(self, batch, data_shape=(-1,1)):
+    def Load_batch_quiz(batch, data_shape=(-1,1)):
         X = []
+        Image_order = []
         for instance in batch:
             link = instance[0]
             image = Image.open(link)
@@ -73,10 +73,12 @@ class DataLoader:
                 data = data[:,:,:-1]
             if data_shape != 'original':
                 data = data.reshape(data_shape)
-            X.append(data)
             image_number = instance[1]
+            X.append(data)
+            Image_order.append(image_number)
         X = jnp.array(X)/255
-        return X
+        Image_order = np.array(Image_order)
+        return X,Image_order
 
     def LoadModelData_info(self, split, batch_size):
         self._get_imgsinfo_train()
