@@ -17,7 +17,7 @@ training_labels_file= 'training_norm.csv'
 quiz_directory = '../../extras/data/C_testing_given/test_data/'
 quiz_training_folder = 'test_data'
 #configurations
-conf_tracking = 1
+conf_tracking = 0
 seed = 0
 rng = jax.random.PRNGKey(seed)
 rng2 = jax.random.PRNGKey(seed)
@@ -42,7 +42,7 @@ example_batch_x,example_batch_y = training_object.Load_batch(train[0], data_shap
 test = test[:,:-7,:].reshape(10,-1,4)
 print('-> Model init')
 def make_net(mode: str):
-    return my_combinator( 
+    return stax.serial( 
         stax.Conv(5,(5,5), padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
         stax.MaxPool((2,2)),
 
