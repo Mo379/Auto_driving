@@ -18,15 +18,15 @@ quiz_directory = '../../extras/data/C_testing_given/test_data/'
 quiz_training_folder = 'test_data'
 #configurations
 conf_tracking = 1
-seed = 0
+seed = 4
 rng = jax.random.PRNGKey(seed)
 rng2 = jax.random.PRNGKey(seed)
 data_shape = 'original'
 parameter_init_scale = 0.01
 split= 0.8
-batch_size = 256
-n_epochs = 10
-lr = 0.0001
+batch_size = 128 
+n_epochs = 15
+lr = 0.0005
 #dataloading object
 training_object= DataLoader(
         directory,
