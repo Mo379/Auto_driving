@@ -26,7 +26,7 @@ parameter_init_scale = 0.0001
 split= 0.8
 batch_size = 256
 n_epochs = 10
-lr = 0.0001
+lr = 0.001
 #dataloading object
 training_object= DataLoader(
         directory,
@@ -43,20 +43,26 @@ test = test[:,:-7,:].reshape(10,-1,4)
 print('-> Model init')
 def make_net(mode: str):
     return stax.serial( 
-        stax.Conv(5,(15,15), padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
+        stax.Conv(5,(15,15), padding='SAME'),LeakyRelu_layer,stax.Dropout(0.1, mode=mode),
         stax.MaxPool((3,3)),
 
-        stax.Conv(5,(15,15), padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
-        stax.AvgPool((3,3)),
+        stax.Conv(5,(15,15), padding='SAME'),LeakyRelu_layer,stax.Dropout(0.1, mode=mode),
+        stax.MaxPool((3,3)),
         
-        stax.Conv(5, (10,10),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
+        stax.Conv(5, (10,10),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.1, mode=mode),
         stax.MaxPool((3,3)),
 
-        stax.Conv(5, (5,5),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
-        stax.AvgPool((3,3)),
+        stax.Conv(5, (5,5),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.1, mode=mode),
+        stax.MaxPool((3,3)),
 
-        stax.Conv(5, (5,5),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
-        stax.AvgPool((3,3)),
+        stax.Conv(5, (5,5),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.1, mode=mode),
+        stax.MaxPool((3,3)),
+
+        stax.Conv(5, (5,5),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.1, mode=mode),
+        stax.MaxPool((3,3)),
+
+        stax.Conv(5, (5,5),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.1, mode=mode),
+        stax.MaxPool((3,3)),
 
         my_Flatten(),
         my_Dense(2)
