@@ -22,11 +22,11 @@ seed = 0
 rng = jax.random.PRNGKey(seed)
 rng2 = jax.random.PRNGKey(seed)
 data_shape = 'original'
-parameter_init_scale = 0.0001
+parameter_init_scale = 0.01
 split= 0.8
 batch_size = 256
 n_epochs = 10
-lr = 0.001
+lr = 0.0001
 #dataloading object
 training_object= DataLoader(
         directory,
@@ -91,7 +91,7 @@ def update(opt_state, x,y):
     return loss,opt_state
 #optimizer_init
 print('-> Optimizer init')
-opt_init, opt_update, opt_get_params = optimizers.adam(lr)
+opt_init, opt_update, opt_get_params = optimizers.rmsprop_momentum(lr)
 opt_state = opt_init(params)
 ##################GPU goes buuurrrrrr#######################
 if __name__ == "__main__":
