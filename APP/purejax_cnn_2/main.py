@@ -18,15 +18,15 @@ quiz_directory = '../../extras/data/C_testing_given/test_data/'
 quiz_training_folder = 'test_data'
 #configurations
 conf_tracking = 1
-seed = 4
+seed = 0
 rng = jax.random.PRNGKey(seed)
 rng2 = jax.random.PRNGKey(seed)
 data_shape = 'original'
 parameter_init_scale = 0.01
 split= 0.8
-batch_size = 128 
+batch_size = 256
 n_epochs = 15
-lr = 0.0005
+lr = 0.0001
 #dataloading object
 training_object= DataLoader(
         directory,
@@ -43,17 +43,14 @@ test = test[:,:-7,:].reshape(10,-1,4)
 print('-> Model init')
 def make_net(mode: str):
     return stax.serial( 
-        stax.Conv(5,(6,6), padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
-        stax.MaxPool((3,3)),
+        stax.Conv(5,(5,5), padding='SAME'),Relu_layer,
+        stax.AvgPool((3,3)),
 
-        stax.Conv(5,(6,6), padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
-        stax.MaxPool((3,3)),
-        
-        stax.Conv(5, (6,6),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
-        stax.MaxPool((3,3)),
+        stax.Conv(5,(5,5), padding='SAME'),Relu_layer,
+        stax.AvgPool((3,3)),
 
-        stax.Conv(5, (6,6),padding='SAME'),LeakyRelu_layer,stax.Dropout(0.2, mode=mode),
-        stax.MaxPool((3,3)),
+        stax.Conv(5, (5,5),padding='SAME'),Relu_layer,
+        stax.MaxPool((2,2)),
 
         my_Flatten(),
         my_Dense(2)
@@ -67,7 +64,7 @@ model_shape = jax.tree_map(lambda x: x.shape, params)
 #wandb tracking
 if conf_tracking:
     config = {
-      "model_type" : 'Bigger convnet + avg pool and max pool layers, batch normalisation and dropout, using my own data generated from the car and data augmentation, Realu swapped for leaky relu',
+      "model_type" : 'Same convnet as submission 2 ,better workflow',
       "param_initialisation_scale" : parameter_init_scale,
       "model_shape" : str(model_shape),
       "learning_rate": lr,
@@ -75,7 +72,7 @@ if conf_tracking:
       "batch_size": batch_size,
       "data_shape" : str(data_shape),
       "epochs": n_epochs,
-      "Note" : "This run focuses on adding the testing data loss, and improving workflow by making predictions directly after training. The cnn sees improvments by adding additional layers such as batch normalisation and dropout. Relu swapped with LeakyRelu"
+      "Note" : "This run focuses on adding the testing data loss, and improving workflow by making predictions directly after training. The cnn sees no improvements"
     }
     wandb.init(project="Autonomous-driving", entity="mo379",config=config)
 # 
