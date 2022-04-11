@@ -25,7 +25,7 @@ data_shape = 'original'
 parameter_init_scale = 0.01
 split= 0.8
 batch_size = 256
-n_epochs = 8
+n_epochs = 5
 lr = 0.0001
 #dataloading object
 training_object= DataLoader(
@@ -43,14 +43,11 @@ test = test[:,:-7,:].reshape(10,-1,4)
 print('-> Model init')
 def make_net(mode: str):
     return stax.serial( 
-        stax.Conv(5,(5,5), padding='SAME'),stax.LeakyRelu,
-        stax.AvgPool((3,3)),
+        stax.Conv(6,(6,6), padding='SAME'),stax.LeakyRelu,
+        stax.AvgPool((5,5)),
 
-        stax.Conv(5,(5,5), padding='SAME'),stax.LeakyRelu,
-        stax.AvgPool((3,3)),
-
-        stax.Conv(5, (5,5),padding='SAME'),stax.LeakyRelu,
-        stax.MaxPool((2,2)),
+        stax.Conv(6,(6,6), padding='SAME'),stax.LeakyRelu,
+        stax.AvgPool((5,5)),
 
         my_Flatten(),
         my_Dense(2)
