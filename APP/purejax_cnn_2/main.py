@@ -52,7 +52,7 @@ def make_net(mode: str):
         stax.AvgPool((3,3)),
 
         stax.Conv(5, (5,5),padding='SAME'),stax.LeakyRelu,
-        stax.MaxPool((2,2)),stax.DropOut(0.2,mode=mode),
+        stax.MaxPool((2,2)),stax.Dropout(0.2,mode=mode),
 
         my_Flatten(),
         my_Dense(2)
