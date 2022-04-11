@@ -25,7 +25,7 @@ data_shape = 'original'
 parameter_init_scale = 0.01
 split= 0.8
 batch_size = 256
-n_epochs = 15
+n_epochs = 8
 lr = 0.0001
 #dataloading object
 training_object= DataLoader(
