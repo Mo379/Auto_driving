@@ -17,7 +17,7 @@ training_labels_file= 'training_norm.csv'
 quiz_directory = '../../extras/data/C_testing_given/test_data/'
 quiz_training_folder = 'test_data'
 #configurations
-conf_tracking = 1
+conf_tracking = 0
 seed = 0
 rng = jax.random.PRNGKey(seed)
 rng2 = jax.random.PRNGKey(seed)
@@ -38,16 +38,24 @@ train,test = training_object.LoadModelData_info(
         split = split, 
         batch_size = batch_size)
 example_batch_x,example_batch_y = training_object.Load_batch(train[0], data_shape=data_shape)
+print('-> Loading data to memory')
+loaded_X_batches, loaded_Y_batches= training_object.Load_all_batches(
+        train[0:1], 
+        data_shape=data_shape
+        )
 #model initialisation
 test = test[:,:-7,:].reshape(10,-1,4)
 print('-> Model init')
 def make_net(mode: str):
     return stax.serial( 
-        stax.Conv(6,(6,6), padding='SAME'),stax.LeakyRelu,
-        stax.AvgPool((5,5)),
+        stax.Conv(5,(5,5), padding='SAME'),stax.LeakyRelu,
+        stax.AvgPool((3,3)),
 
-        stax.Conv(6,(6,6), padding='SAME'),stax.LeakyRelu,
-        stax.AvgPool((5,5)),
+        stax.Conv(5,(5,5), padding='SAME'),stax.LeakyRelu,
+        stax.AvgPool((3,3)),
+
+        stax.Conv(5, (5,5),padding='SAME'),stax.LeakyRelu,
+        stax.MaxPool((2,2)),
 
         my_Flatten(),
         my_Dense(2)
@@ -92,8 +100,12 @@ if __name__ == "__main__":
     print("Begin training")
     start = time.time()
     for epoch in range(n_epochs):
-        for i in range(len(train)): 
-            X_batch,Y_batch=training_object.Load_batch(train[i], data_shape=data_shape) 
+        #data iterator
+        X_iter = iter(loaded_X_batches)
+        Y_iter = iter(loaded_Y_batches)
+        for _ in range(len(loaded_X_batches)): 
+            X_batch,Y_batch= next(X_iter),next(Y_iter)
+            exit()
             #X_batch,Y_batch = training_object.Augment_batch(X_batch,Y_batch)
             loss, opt_state = update(opt_state, X_batch, Y_batch)
             print(f"- Batch {i} at loss: {loss}")
