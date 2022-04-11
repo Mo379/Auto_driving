@@ -39,10 +39,12 @@ train,test = training_object.LoadModelData_info(
         batch_size = batch_size)
 example_batch_x,example_batch_y = training_object.Load_batch(train[0], data_shape=data_shape)
 #model initialisation
+input_shape = example_batch_x.shape
 test = test[:,:-7,:].reshape(10,-1,4)
 print('-> Model init')
 def make_net(mode: str):
     return stax.serial( 
+        my_augemntation(),
         stax.Conv(5,(5,5), padding='SAME'),stax.LeakyRelu,
         stax.AvgPool((3,3)),
 
@@ -50,7 +52,7 @@ def make_net(mode: str):
         stax.AvgPool((3,3)),
 
         stax.Conv(5, (5,5),padding='SAME'),stax.LeakyRelu,
-        stax.MaxPool((2,2)),
+        stax.MaxPool((2,2)),stax.DropOut(0.2,mode=mode),
 
         my_Flatten(),
         my_Dense(2)
@@ -64,7 +66,7 @@ model_shape = jax.tree_map(lambda x: x.shape, params)
 #wandb tracking
 if conf_tracking:
     config = {
-      "model_type" : 'Same convnet as submission 2 ,better workflow',
+      "model_type" : 'Same convnet as submission 2 ,leaky relu, data augmentation, dropoutlayer',
       "param_initialisation_scale" : parameter_init_scale,
       "model_shape" : str(model_shape),
       "learning_rate": lr,
@@ -72,7 +74,7 @@ if conf_tracking:
       "batch_size": batch_size,
       "data_shape" : str(data_shape),
       "epochs": n_epochs,
-      "Note" : "This run focuses on adding the testing data loss, and improving workflow by making predictions directly after training. LeakyRelu is used instead of Relu"
+      "Note" : "This run focuses on adding the testing data loss, and improving workflow by making predictions directly after training. LeakyRelu is used instead of Relu, and the data is augmented"
     }
     wandb.init(project="Autonomous-driving", entity="mo379",config=config)
 # 
@@ -97,7 +99,6 @@ if __name__ == "__main__":
     for epoch in range(n_epochs):
         for i in range(len(train)): 
             X_batch,Y_batch=training_object.Load_batch(train[i], data_shape=data_shape) 
-            X_batch,Y_batch = training_object.Augment_batch(X_batch,Y_batch)
             loss, opt_state = update(opt_state, X_batch, Y_batch)
             print(f"- Batch {i} at loss: {loss}")
             if conf_tracking==1:

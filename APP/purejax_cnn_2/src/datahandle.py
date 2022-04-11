@@ -16,9 +16,7 @@ class DataLoader:
         self.labels_file= labels_file
 
     def Augment_batch(X_batch,Y_batch):
-        pass
-
-        return X_aug,Y_aug
+        return X_batch,Y_batch
 
     def Load_all_batches(self, data, data_shape=(-1,1)):
         loaded_set_features = []
