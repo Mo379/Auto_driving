@@ -43,13 +43,13 @@ test = test[:,:-7,:].reshape(10,-1,4)
 print('-> Model init')
 def make_net(mode: str):
     return stax.serial( 
-        stax.Conv(5,(5,5), padding='SAME'),Relu_layer,
+        stax.Conv(5,(5,5), padding='SAME'),stax.LeakyRelu,
         stax.AvgPool((3,3)),
 
-        stax.Conv(5,(5,5), padding='SAME'),Relu_layer,
+        stax.Conv(5,(5,5), padding='SAME'),stax.LeakyRelu,
         stax.AvgPool((3,3)),
 
-        stax.Conv(5, (5,5),padding='SAME'),Relu_layer,
+        stax.Conv(5, (5,5),padding='SAME'),stax.LeakyRelu,
         stax.MaxPool((2,2)),
 
         my_Flatten(),
@@ -72,7 +72,7 @@ if conf_tracking:
       "batch_size": batch_size,
       "data_shape" : str(data_shape),
       "epochs": n_epochs,
-      "Note" : "This run focuses on adding the testing data loss, and improving workflow by making predictions directly after training. The cnn sees no improvements"
+      "Note" : "This run focuses on adding the testing data loss, and improving workflow by making predictions directly after training. LeakyRelu is used instead of Relu"
     }
     wandb.init(project="Autonomous-driving", entity="mo379",config=config)
 # 
