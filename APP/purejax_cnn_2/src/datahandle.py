@@ -15,6 +15,11 @@ class DataLoader:
         self.images_dir = images_dir
         self.labels_file= labels_file
 
+    def Augment_batch(X_batch,Y_batch):
+        pass
+
+        return X_aug,Y_aug
+
     def Load_all_batches(self, data, data_shape=(-1,1)):
         loaded_set_features = []
         loaded_set_labels= []

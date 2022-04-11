@@ -38,11 +38,6 @@ train,test = training_object.LoadModelData_info(
         split = split, 
         batch_size = batch_size)
 example_batch_x,example_batch_y = training_object.Load_batch(train[0], data_shape=data_shape)
-print('-> Loading data to memory')
-loaded_X_batches, loaded_Y_batches= training_object.Load_all_batches(
-        train[0:1], 
-        data_shape=data_shape
-        )
 #model initialisation
 test = test[:,:-7,:].reshape(10,-1,4)
 print('-> Model init')
@@ -100,13 +95,9 @@ if __name__ == "__main__":
     print("Begin training")
     start = time.time()
     for epoch in range(n_epochs):
-        #data iterator
-        X_iter = iter(loaded_X_batches)
-        Y_iter = iter(loaded_Y_batches)
-        for _ in range(len(loaded_X_batches)): 
-            X_batch,Y_batch= next(X_iter),next(Y_iter)
-            exit()
-            #X_batch,Y_batch = training_object.Augment_batch(X_batch,Y_batch)
+        for i in range(len(train)): 
+            X_batch,Y_batch=training_object.Load_batch(train[i], data_shape=data_shape) 
+            X_batch,Y_batch = training_object.Augment_batch(X_batch,Y_batch)
             loss, opt_state = update(opt_state, X_batch, Y_batch)
             print(f"- Batch {i} at loss: {loss}")
             if conf_tracking==1:
