@@ -3,11 +3,9 @@ import jax.numpy as jnp
 from jax.example_libraries import stax, optimizers
 import operator as op
 import functools
-import tensorflow as tf
+from PIL import Image, ImageEnhance
+import dm_pix as pix
 
-from tensorflow import keras
-from tensorflow.keras import layers
-from tensorflow.keras.models import Sequential
 #
 import numpy as np
 
@@ -65,22 +63,5 @@ def my_Flatten():
   def apply_fn(params, inputs, **kwargs):
     return jnp.reshape(inputs, (inputs.shape[0], -1))
   return init_fn, apply_fn
-
-def my_augemntation():
-    def init_fn(rng, input_shape):
-        return input_shape, ()
-    def apply_fn(params, inputs, **kwargs):
-        data_augmentation = keras.Sequential(
-              [
-                keras.layers.RandomContrast(0.4),
-                layers.experimental.preprocessing.RandomRotation(0.1),
-                layers.experimental.preprocessing.RandomZoom(0.1),
-                keras.layers.Resizing(200,280),
-              ]
-            )
-        outputs = data_augmentation(inputs).numpy().astype("float32")
-        output = jnp.array(outputs)
-        return outputs
-    return init_fn, apply_fn
 
 

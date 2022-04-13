@@ -66,7 +66,7 @@ model_shape = jax.tree_map(lambda x: x.shape, params)
 #wandb tracking
 if conf_tracking:
     config = {
-      "model_type" : 'Same convnet as submission 2 ,leaky relu, data augmentation, dropoutlayer',
+      "model_type" : 'Same convnet as submission 2 ,leaky relu, collected, data augmentation, dropoutlayer',
       "param_initialisation_scale" : parameter_init_scale,
       "model_shape" : str(model_shape),
       "learning_rate": lr,
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     start = time.time()
     for epoch in range(n_epochs):
         for i in range(len(train)): 
-            X_batch,Y_batch=training_object.Load_batch(train[i], data_shape=data_shape) 
+            X_batch,Y_batch=training_object.Load_batch(train[i], data_shape=data_shape, augmentation=True) 
             loss, opt_state = update(opt_state, X_batch, Y_batch)
             print(f"- Batch {i} at loss: {loss}")
             if conf_tracking==1:

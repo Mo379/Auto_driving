@@ -41,7 +41,7 @@ class DataLoader:
         loaded_set_labels= jnp.array(loaded_set_labels,dtype=jnp.float32)/255
         return loaded_set_features,loaded_set_labels
 
-    def Load_batch(self, batch, data_shape=(-1,1)):
+    def Load_batch(self, batch, data_shape=(-1,1), augmentation=False):
         X = []
         Y = []
         for instance in batch:
@@ -58,9 +58,13 @@ class DataLoader:
             speed = instance[3]
             Labels = np.array([angle,speed], dtype=np.float32)
             Y.append(Labels)
+        if augmentation:
+            X,Y = _augment_batch(X,Y)
         loaded_set_features = jnp.array(X,dtype=jnp.float32)/255
         loaded_set_labels= jnp.array(Y,dtype=jnp.float32)
         return loaded_set_features,loaded_set_labels
+    def _augment_batch(self, X,Y):
+        pass
 
     def Load_batch_quiz(self, batch, data_shape=(-1,1)):
         X = []
