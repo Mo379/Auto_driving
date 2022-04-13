@@ -4,8 +4,6 @@ from jax.example_libraries import stax, optimizers
 import operator as op
 import functools
 from PIL import Image, ImageEnhance
-import dm_pix as pix
-
 #
 import numpy as np
 

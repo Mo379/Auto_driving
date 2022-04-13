@@ -17,14 +17,14 @@ training_labels_file= 'training_norm.csv'
 quiz_directory = '../../extras/data/C_testing_given/test_data/'
 quiz_training_folder = 'test_data'
 #configurations
-conf_tracking = 1
+conf_tracking = 0
 seed = 0
 rng = jax.random.PRNGKey(seed)
 rng2 = jax.random.PRNGKey(seed)
 data_shape = 'original'
 parameter_init_scale = 0.01
 split= 0.8
-batch_size = 256
+batch_size = 32
 n_epochs = 5
 lr = 0.0001
 #dataloading object
@@ -44,7 +44,6 @@ test = test[:,:-7,:].reshape(10,-1,4)
 print('-> Model init')
 def make_net(mode: str):
     return stax.serial( 
-        my_augemntation(),
         stax.Conv(5,(5,5), padding='SAME'),stax.LeakyRelu,
         stax.AvgPool((3,3)),
 

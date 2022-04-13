@@ -8,6 +8,10 @@ from numpy import asarray
 import pandas as pd
 import matplotlib.pyplot as plt
 import jax.numpy as jnp
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+from tensorflow.keras.models import Sequential
 
 class DataLoader:
     def __init__(self, directory, images_dir,labels_file=''):
@@ -41,7 +45,7 @@ class DataLoader:
         loaded_set_labels= jnp.array(loaded_set_labels,dtype=jnp.float32)/255
         return loaded_set_features,loaded_set_labels
 
-    def Load_batch(self, batch, data_shape=(-1,1), augmentation=False):
+    def Load_batch(self, batch, data_shape=(-1,1), augmentation=False, augmentation_pass = 3):
         X = []
         Y = []
         for instance in batch:
@@ -59,12 +63,23 @@ class DataLoader:
             Labels = np.array([angle,speed], dtype=np.float32)
             Y.append(Labels)
         if augmentation:
-            X,Y = _augment_batch(X,Y)
+            X,Y = self._augment_batch(X,Y, n=augmentation_pass)
         loaded_set_features = jnp.array(X,dtype=jnp.float32)/255
         loaded_set_labels= jnp.array(Y,dtype=jnp.float32)
         return loaded_set_features,loaded_set_labels
-    def _augment_batch(self, X,Y):
-        pass
+    def _augment_batch(self, X,Y,n):
+        rotation = layers.experimental.preprocessing.RandomRotation(0.15)
+        zoom = layers.experimental.preprocessing.RandomZoom(0.15)
+        contrast = layers.RandomContrast(0.15)
+        data = X
+        X = X * n
+        x = rotation(X)
+        x = zoom(x)
+        x = contrast(x)
+        x = x.numpy().tolist()
+        augmented_X= data + x 
+        augmented_Y= Y*(n+1)
+        return augmented_X, augmented_Y
 
     def Load_batch_quiz(self, batch, data_shape=(-1,1)):
         X = []
