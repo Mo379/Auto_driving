@@ -3,6 +3,10 @@ import jax.numpy as jnp
 from jax.example_libraries import stax, optimizers
 import operator as op
 import functools
+<<<<<<< HEAD
+=======
+from PIL import Image, ImageEnhance
+>>>>>>> 3c738dab8573792f225888a6ad159cfff0cf1de0
 #
 import numpy as np
 
@@ -61,6 +65,7 @@ def my_Flatten():
     return jnp.reshape(inputs, (inputs.shape[0], -1))
   return init_fn, apply_fn
 
+<<<<<<< HEAD
 def my_augmentation():
     def init_fn(rng, input_shape):
         return input_shape, ()
@@ -68,4 +73,6 @@ def my_augmentation():
         return 1
     return init_fn, apply_fn
 
+=======
+>>>>>>> 3c738dab8573792f225888a6ad159cfff0cf1de0
 

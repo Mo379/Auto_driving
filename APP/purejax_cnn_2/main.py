@@ -17,14 +17,14 @@ training_labels_file= 'training_norm.csv'
 quiz_directory = '../../extras/data/C_testing_given/test_data/'
 quiz_training_folder = 'test_data'
 #configurations
-conf_tracking = 1
+conf_tracking = 0
 seed = 0
 rng = jax.random.PRNGKey(seed)
 rng2 = jax.random.PRNGKey(seed)
 data_shape = 'original'
 parameter_init_scale = 0.01
 split= 0.8
-batch_size = 256
+batch_size = 32
 n_epochs = 5
 lr = 0.0001
 #dataloading object
@@ -44,7 +44,6 @@ test = test[:,:-7,:].reshape(10,-1,4)
 print('-> Model init')
 def make_net(mode: str):
     return stax.serial( 
-        my_augemntation(),
         stax.Conv(5,(5,5), padding='SAME'),stax.LeakyRelu,
         stax.AvgPool((3,3)),
 
@@ -66,7 +65,7 @@ model_shape = jax.tree_map(lambda x: x.shape, params)
 #wandb tracking
 if conf_tracking:
     config = {
-      "model_type" : 'Same convnet as submission 2 ,leaky relu, data augmentation, dropoutlayer',
+      "model_type" : 'Same convnet as submission 2 ,leaky relu, collected, data augmentation, dropoutlayer',
       "param_initialisation_scale" : parameter_init_scale,
       "model_shape" : str(model_shape),
       "learning_rate": lr,
@@ -98,7 +97,7 @@ if __name__ == "__main__":
     start = time.time()
     for epoch in range(n_epochs):
         for i in range(len(train)): 
-            X_batch,Y_batch=training_object.Load_batch(train[i], data_shape=data_shape) 
+            X_batch,Y_batch=training_object.Load_batch(train[i], data_shape=data_shape, augmentation=True) 
             loss, opt_state = update(opt_state, X_batch, Y_batch)
             print(f"- Batch {i} at loss: {loss}")
             if conf_tracking==1:
