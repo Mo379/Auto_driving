@@ -156,7 +156,7 @@ class DataLoader:
             angle = round((int(angle)-50)/(120-50),3)
             speed = parts[2]
             speed = round(int(speed)/35, 3)
-            if speed == 0.0:
+            if speed < 0.5:
                 speed = round(np.random.uniform(low=0.0, high=0.15),3)
             else:
                 speed = round(np.random.uniform(low=0.85, high=1),3)
@@ -186,7 +186,7 @@ class DataLoader:
                 continue
             angle = image_label[0]
             speed = image_label[1]
-            if speed == 0.0:
+            if speed < 0.5:
                 speed = round(np.random.uniform(low=0.0, high=0.15),3)
             else:
                 speed = round(np.random.uniform(low=0.85, high=1),3)
